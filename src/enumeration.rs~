@@ -1,0 +1,12 @@
+use reqwest;
+use std::ops::Add;
+
+pub async fn enumerate_directories(wordlist: String, url: String) {
+    for line in wordlist.lines() {
+	let result = reqwest::get(url.clone().add(&line)).await.expect("failed to issue get request");
+	let status_code = result.status();
+	if status_code == 200 {
+	    println!("{url}{line}: Status_Code:{status_code}");
+	}
+    }
+}
