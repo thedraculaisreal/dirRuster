@@ -1,7 +1,6 @@
 use reqwest;
 
 pub async fn directories(wordlist: &String, url: &String, extension: String) {
-    let http = String::from("http://");
     let mut crawl_urls: Vec<String> = Vec::new();
     let mut ext = String::new();
     match extension.as_str() {
@@ -10,21 +9,29 @@ pub async fn directories(wordlist: &String, url: &String, extension: String) {
 	".txt" => ext = ".txt".to_string(),
 	_ => ext = "".to_string()
     }
+
     for line in wordlist.lines() {
-	let result = reqwest::get(http.clone() + &url.clone() + line + &ext.clone()).await.expect("failed to issue get request");
+	let result = reqwest::get(url.clone() + line + &ext.clone()).await.expect("failed to issue get request");
 	let status_code = result.status();
 	if status_code == 200 {
-	    println!("http://{url}{line}{ext}: Status_Code:{status_code}");
-	    if ext.len() > 2 {
-		continue;
+	    println!("{url}{line}{ext}: Status_Code:{status_code}");
+	    if ext.len() > 1 {
+		crawl_urls.push(url.clone() + line + "/");
 	    }
-	    crawl_urls.push(http.clone() + &url.clone() + line);
 	}
     }
-    for url in crawl_urls {
-	println!("{url}");
+    // url crawling, will make better later, just first try.
+    for crawl_url in crawl_urls {
+	for line in wordlist.lines() {
+	    let result = reqwest::get(crawl_url.clone() + line).await.expect("failed to issue get request");
+	    let status_code = result.status();
+	    if status_code == 200 {
+		println!("{crawl_url}{line}: Status_Code:{status_code}");
+	    }
+	}
     }
 }
+
 
 pub async fn sub_domains(wordlist: &String, url: &String) {
     let http = String::from("http://");

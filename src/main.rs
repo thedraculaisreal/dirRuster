@@ -9,14 +9,16 @@ mod enumeration;
 #[tokio::main]
 async fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 4 {
-	println!("<executable> <url> <path-to-wordlist> <options> <extension>");
+
+    if args.len() <= 4 {
+	eprintln!("ERROR: <executable> <url> <path-to-wordlist> <options> <extension>");
 	return Ok(())
     }
+
     let url = args[1].clone();
     let wordlist = args[2].clone();
-    let option = args[3].clone(); // dir sub/vhost
     let mut extension = String::from("");
+    let option = args[3].clone(); // dir sub/vhost
     if args.len() == 5 {
 	extension = args[4].clone();
     }
