@@ -36,13 +36,12 @@ pub async fn directories(wordlist: &String, url: &String, extension: String) {
 	    }
 	}
 	// url crawling, will make better later, just first try.
-	for crawl_url in crawl_urls.clone() {
+	for crawl_url in crawl_urls {
 	    for line in wordlist.lines() {
 		let result = reqwest::get(crawl_url.clone() + line).await.expect("failed to issue get request");
 		let status_code = result.status();
 		if status_code == 200 {
 		    println!("{crawl_url}{line}: Status_Code:{status_code}");
-		    crawl_urls.push(crawl_url.clone() + line + "/");
 		    directories.push_str(&(crawl_url.clone() + line + "/"));
 		}
 	    }
