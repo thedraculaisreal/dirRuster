@@ -11,7 +11,7 @@ async fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() <= 4 {
-	eprintln!("ERROR: <executable> <url> <path-to-wordlist> <options> <extension>");
+	eprintln!("ERROR: <executable> <url> <path-to-wordlist> <options> <extension/crawl>");
 	return Ok(())
     }
 
