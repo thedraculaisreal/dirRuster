@@ -2,9 +2,8 @@ use std::io;
 use std::env;
 use std::fs::*;
 use std::io::Read;
-
 mod enumeration;
-//mod subdomains;
+
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -15,7 +14,7 @@ async fn main() -> io::Result<()> {
 	return Ok(())
     }
 
-    let url = args[1].clone();
+    let mut url = args[1].clone();
     let wordlist = args[2].clone();
     let mut extension = String::from("");
     let option = args[3].clone(); // dir sub/vhost
@@ -27,10 +26,10 @@ async fn main() -> io::Result<()> {
     file.read_to_string(&mut wordlist_contents).expect("Faield to read file into buffer");
 
     if option == "dir" {
-	enumeration::directories(&wordlist_contents, &url, extension).await;
+	enumeration::directories(&wordlist_contents, &mut url, extension).await;
     }
-    if option == "sub" {
-	enumeration::sub_domains(&wordlist_contents, &url).await;
+    else if option == "sub" {
+	enumeration::sub_domains(&wordlist_contents, &mut url).await;
     }
     Ok(())
 }
