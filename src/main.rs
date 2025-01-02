@@ -27,9 +27,10 @@ async fn main() -> io::Result<()> {
 
     if option == "dir" {
 	enumeration::directories(&wordlist_contents, &mut url, extension).await;
-    }
-    else if option == "sub" {
+    } else if option == "sub" {
 	enumeration::sub_domains(&wordlist_contents, &mut url).await;
+    } else {
+	eprintln!("enter a valid option for enumeration (i.e) dir, sub check github for examples ")
     }
     Ok(())
 }

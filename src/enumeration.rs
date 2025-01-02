@@ -1,12 +1,14 @@
 use reqwest;
 use std::fs;
 use std::fs::*;
+use colored::Colorize;
 
 pub async fn directories(wordlist: &String, url: &mut String, extension: String) {
     let mut crawl_urls: Vec<String> = Vec::new();
     let mut directories = String::new();
     if !url.contains("http://") && !url.contains("https://") {
 	eprintln!("<ERROR> Invalid url entered make sure it contains http:// or https://");
+	return
     }
     if extension != "crawl" {
 	// extensions are split by , (i.e) .py,.js,.php,.phtml
@@ -16,7 +18,7 @@ pub async fn directories(wordlist: &String, url: &mut String, extension: String)
 		let result = reqwest::get(url.clone() + line + ext).await.expect("failed to issue get request");
 		let status_code = result.status();
 		if status_code == 200 {
-		    println!("{url}{line}{ext}: Status_Code:{status_code}");
+		    println!("{}{}{}: Status_Code:{}", url.bold(), line.bold(), ext.bold(), "200".purple());
 		    directories.push_str(&(url.clone() + line + ext));
 		}
 	    }
@@ -26,7 +28,7 @@ pub async fn directories(wordlist: &String, url: &mut String, extension: String)
 	    let result = reqwest::get(url.clone() + line).await.expect("failed to issue get request");
 	    let status_code = result.status();
 	    if status_code == 200 {
-		println!("{url}{line}: Status_Code:{status_code}");
+		println!("{}{}: Status_Code:{}", url.bold(), line.bold(), "200".purple());
 		crawl_urls.push(url.clone() + line + "/");
 		directories.push_str(&(url.clone() + line + "/"));
 	    }
@@ -37,7 +39,7 @@ pub async fn directories(wordlist: &String, url: &mut String, extension: String)
 		let result = reqwest::get(crawl_url.clone() + line).await.expect("failed to issue get request");
 		let status_code = result.status();
 		if status_code == 200 {
-		    println!("{crawl_url}{line}: Status_Code:{status_code}");
+		    println!("{}{}: Status_Code:{}", crawl_url.bold(), line.bold(), "200".purple());
 		    directories.push_str(&(crawl_url.clone() + line + "/"));
 		}
 	    }
@@ -67,6 +69,7 @@ pub async fn sub_domains(wordlist: &String, url: &mut String) {
 	http = String::from("http://");
     } else {
 	eprintln!("<ERROR> Invalid url entered make sure it contains http:// or https://");
+	return
     }
     let mut subdomains = String::new();
     let period = String::from(".");
@@ -74,7 +77,7 @@ pub async fn sub_domains(wordlist: &String, url: &mut String) {
 	let result = reqwest::get(http.clone() + line + &period + &url.clone()).await.expect("failed to issue get request");
 	let status_code = result.status();
 	if status_code == 200 {
-	    println!("http://{line}.{url}: Status_Code:{status_code}");
+	    println!("http://{}.{}: Status_Code:{}", line.bold(), url.yellow(), "200".red());
 	    subdomains.push_str(&(line.to_owned() + &period + &url.clone()));
 	}
     }
